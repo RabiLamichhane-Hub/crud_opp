@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-color-dark: #2980b9;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --secondary-color: #95a5a6;
+            --background-color: #f4f7f9;
+            --card-background: #ffffff;
+            --text-color: #333;
+            --border-color: #e1e4e8;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 40px 20px;
+        }
+
+        .task-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .task-header h1 {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-color-dark);
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto; /* For responsive behavior on small screens */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 16px 25px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        thead th {
+            background-color: #f9fafb;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #555;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: #f7f9fc;
+        }
+        
+        .task-name-link {
+            font-weight: 500;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        .task-name-link:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .status-complete { background-color: var(--success-color); }
+        .status-pending { background-color: var(--secondary-color); }
+
+        .action-links {
+            display: flex;
+            gap: 15px;
+            white-space: nowrap;
+        }
+
+        .action-links a {
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+        .action-links a.delete {
+            color: var(--danger-color);
+        }
+        .action-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 60px 25px;
+            color: #777;
+        }
+        .empty-message h2 {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="task-container">
+        <header class="task-header">
+            <h1>Task List</h1>
+            <a href="{% url 'create' %}" class="btn btn-primary">Create New Task</a>
+        </header>
+        
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Status</th>
+                        <th>Created Date</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr>
+                        <!-- Task Name -->
+                        <td><a href="{% url 'description_view' task.pk %}" class="task-name-link">{{ task.name }}</a></td>
+                        
+                        <!-- Complete Status Badge -->
+                        <td>
+                            {% if task.complete_status %}
+                                <span class="status-badge status-complete">Complete</span>
+                            {% else %}
+                                <span class="status-badge status-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        
+                        <!-- Created Date -->
+                        <td>{{ task.created_date|date:"M. d, Y" }}</td>
+                        
+                        <!-- Due Date -->
+                        <td>{{ task.due_date|date:"M. d, Y" }}</td>
+                        
+                        <!-- Action Links -->
+                        <td>
+                            <div class="action-links">
+                                <a href="{% url 'update' task.pk %}">Edit</a>
+                                <a href="{% url 'delete' task.pk %}" class="delete">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <!-- Message shown if there are no tasks -->
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-message">
+                                <h2>No Tasks Found</h2>
+                                <p>Click the "Create New Task" button to get started.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

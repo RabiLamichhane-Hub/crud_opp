@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-color-dark: #2980b9;
+            --secondary-color: #7f8c8d;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --background-color: #f4f7f9;
+            --card-background: #ffffff;
+            --text-color: #333;
+            --border-color: #e1e4e8;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 40px 20px;
+        }
+
+        .detail-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 15px;
+        }
+
+        .detail-header h1 {
+            font-size: 2rem;
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        .status-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .status-complete { background-color: var(--success-color); }
+        .status-pending { background-color: var(--secondary-color); }
+        
+        .detail-content {
+            padding: 30px;
+        }
+
+        .detail-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .section-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #444;
+        }
+        .section-text-empty {
+            font-style: italic;
+            color: #888;
+        }
+        
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .metadata-item .metadata-label {
+            font-weight: 600;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .metadata-item .metadata-value {
+            font-size: 1rem;
+        }
+        .metadata-value.overdue {
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+        
+        .detail-footer {
+            background-color: #f9fafb;
+            padding: 20px 30px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-color-dark);
+        }
+        .btn-secondary {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .btn-secondary:hover {
+            color: var(--text-color);
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="detail-container">
+        <header class="detail-header">
+            <h1>{{ task.name }}</h1>
+            {% if task.complete_status %}
+                <span class="status-badge status-complete">Complete</span>
+            {% else %}
+                <span class="status-badge status-pending">Pending</span>
+            {% endif %}
+        </header>
+
+        <div class="detail-content">
+            <!-- Description Section -->
+            <div class="detail-section">
+                <h2 class="section-title">Description</h2>
+                {% if task.description %}
+                    <p class="section-text">{{ task.description|linebreaksbr }}</p>
+                {% else %}
+                    <p class="section-text section-text-empty">No description was provided for this task.</p>
+                {% endif %}
+            </div>
+
+            <!-- Metadata Section -->
+            <div class="detail-section">
+                <h2 class="section-title">Details</h2>
+                <div class="metadata-grid">
+                    <div class="metadata-item">
+                        <span class="metadata-label">Due Date</span>
+                        <!-- Check if task is overdue (without a model function) -->
+                        {% load tz %}
+                        {% timezone "UTC" %}
+                        <span class="metadata-value {% if task.due_date < now and not task.complete_status %}overdue{% endif %}">
+                            {{ task.due_date|date:"F j, Y, g:i A" }}
+                        </span>
+                        {% endtimezone %}
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Created</span>
+                        <span class="metadata-value">{{ task.created_date|date:"F j, Y, g:i A" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="detail-footer">
+            <a href="{% url 'read' %}" class="btn btn-secondary">← Back to List</a>
+            <a href="{% url 'update' task.pk %}" class="btn btn-primary">Edit Task</a>
+        </footer>
+    </div>
+
+</body>
+</html>

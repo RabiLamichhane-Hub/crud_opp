@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Deletion</title>
+    <style>
+        /* A simple, modern reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Using a clean, system font stack */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: #f4f7f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* The main confirmation card */
+        .confirmation-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .confirmation-card h1 {
+            font-size: 1.8rem;
+            color: #d9534f; /* A warning red color */
+            margin-bottom: 15px;
+        }
+
+        .confirmation-card p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        
+        /* Style to make the task name stand out */
+        .task-name {
+            font-weight: bold;
+            color: #2c3e50;
+            display: block;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #ecf0f1;
+            border-radius: 6px;
+        }
+
+        .warning-text {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        /* Container for the action buttons */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Creates space between buttons */
+        }
+
+        /* Base button styles */
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease-in-out;
+            display: inline-block;
+        }
+
+        /* Specific style for the delete button */
+        .btn-danger {
+            background-color: #d9534f;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c9302c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(217, 83, 79, 0.4);
+        }
+
+        /* Specific style for the cancel button */
+        .btn-secondary {
+            background-color: #ecf0f1;
+            color: #34495e;
+            border: 1px solid #bdc3c7;
+        }
+
+        .btn-secondary:hover {
+            background-color: #bdc3c7;
+            transform: translateY(-2px);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="confirmation-card">
+        <h1>Confirm Deletion</h1>
+        <p>Are you sure you want to permanently delete the following task?</p>
+        
+        <div class="task-name">{{ task.name }}</div>
+
+        <p class="warning-text">This action cannot be undone.</p>
+        
+        <form method="post" style="display: contents;">
+            {% csrf_token %}
+            <div class="button-group">
+                <a href="#" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-danger">Delete Task</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
