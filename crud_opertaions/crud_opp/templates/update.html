@@ -184,7 +184,10 @@
             <div class="form-group">
                 <label for="id_due_date" class="form-label">Due Date & Time</label>
                 <!-- Formats the date to be compatible with the datetime-local input -->
-                <input type="datetime-local" name="due_date" id="id_due_date" class="form-control" value="{{ form.due_date.value|date:'Y-m-d\TH:i' }}" required>
+                <input type="datetime-local" name="due_date" id="id_due_date" 
+                    class="form-control"
+                    value="{% if form.instance.due_date %}{{ form.instance.due_date|date:'Y-m-d\\TH:i' }}{% endif %}" required>
+
             </div>
 
             <!-- Completion Status Checkbox -->
